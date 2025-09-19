@@ -1,0 +1,42 @@
+{
+    "manifest_version": 3,
+    "name": "SickChill Plugin",
+    "version": "1.0",
+    "description": "A plugin to interact with SickChill.",
+    "permissions": [
+        "storage",
+        "tabs",
+        "scripting"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "48": "images/SC-disabled.png",
+            "128": "images/SC-disabled.png"
+        }
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "options_page": "options.html",
+    "icons": {
+        "48": "images/SC.png",
+        "128": "images/SC.png"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js"]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["images/SC.png"],
+            "matches": ["<all_urls>"]
+        }
+    ]
+}
+
