@@ -54,6 +54,10 @@
             font-weight: bold;
             color: #0056b3;
         }
+        .warning {
+            color: #dc3545;
+            font-weight: bold;
+        }
         .disclaimer {
             font-size: 0.9em;
             color: #6c757d;
@@ -95,7 +99,7 @@
         <section>
             <h2>What It Does</h2>
             <p>This is a "helper" extension that simplifies adding new TV shows to SickChill. When you are on a supported site like IMDb, the extension will add a small SickChill icon next to the show's title.</p>
-            <img src="https://tiwas.github.io/sc-plugin/IMDb injected link.png" alt="SickChill icon injected on IMDb">
+            <img src="https://tiwas.github.io/sc-plugin/img/IMDb injected link.png" alt="SickChill icon injected on IMDb">
             <p><strong>This icon acts as a shortcut.</strong> When you click it, a new tab will open directly to the "Add Show" page in your SickChill, and the search for the show will start automatically. It's that simple!</p>
         </section>
 
@@ -105,14 +109,17 @@
             
             <h3>1. General Settings</h3>
             <p>You need to enter the address of your SickChill server and your API key. You can provide both an external and an internal address, and the extension will automatically use the one that is reachable.</p>
-            <img src="https://tiwas.github.io/sc-plugin/Options.png" alt="General settings for the extension">
+            <img src="https://tiwas.github.io/sc-plugin/img/Options.png" alt="General settings for the extension">
 
             <h3>2. Site Configuration</h3>
             <p>The extension is flexible and allows you to define exactly which pages it should activate on, and how it should extract the name of a show. You can set up rules for sites like IMDb, TVMaze, TheTVDB, and others.</p>
-            <img src="https://tiwas.github.io/sc-plugin/site_settings.png" alt="Settings for a specific site like IMDb">
+            <img src="https://tiwas.github.io/sc-plugin/img/site_settings.png" alt="Settings for a specific site like IMDb">
             
             <h3>Getting Started Example</h3>
             <p>To help you get started, you can download a pre-configured settings file with the IMDb example shown above. Go to the extension's Options page, click "Restore Settings", and select the downloaded file.</p>
+            <p class="warning">
+                Important: Importing this file will overwrite and delete all your current settings. Make sure to back up your configuration first if you want to save it.
+            </p>
             <p>
                 <a href="https://tiwas.github.io/sc-plugin/getting_started.json" class="getting-started-link" download>Download getting_started.json</a>
             </p>
