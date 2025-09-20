@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SickChill Plugin</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            color: #007bff;
+            text-align: center;
+        }
+        h2 {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 0.5rem;
+            margin-top: 2.5rem;
+        }
+        p, li {
+            font-size: 16px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .highlight {
+            background-color: #e7f3ff;
+            padding: 1.5rem;
+            border-left: 5px solid #007bff;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+        .highlight a {
+            font-weight: bold;
+            color: #0056b3;
+        }
+        .disclaimer {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .donation-section {
+            text-align: center;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 2.5rem;
+        }
+        .donation-button {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .donation-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SickChill Plugin</h1>
+            <p style="text-align: center;">En enkel nettleserutvidelse for å legge til serier i din lokale SickChill-installasjon.</p>
+        </header>
+
+        <section>
+            <h2>Hva gjør den?</h2>
+            <p>Dette er en "hjelper"-utvidelse som gjør det enklere å legge til nye TV-serier i SickChill. Når du er på en nettside som IMDb, vil utvidelsen legge til et lite SickChill-ikon ved siden av serietittelen.</p>
+            <img src="https://tiwas.github.io/sc-plugin/IMDb injected link.png" alt="SickChill-ikon injisert på IMDb">
+            <p><strong>Dette ikonet fungerer som en hurtiglenke.</strong> Når du klikker på det, åpnes en ny fane direkte til "Legg til serie"-siden i din SickChill, og søket etter serien starter automatisk. Enklere blir det ikke!</p>
+        </section>
+
+        <section>
+            <h2>Hvordan sette den opp</h2>
+            <p>Oppsettet gjøres på innstillingssiden i utvidelsen. Her legger du inn generell informasjon og konfigurerer hvilke sider utvidelsen skal fungere på.</p>
+            
+            <h3>1. Generelle Innstillinger</h3>
+            <p>Her må du legge inn adressen til din SickChill-server og din API-nøkkel. Du kan legge inn både ekstern og intern adresse, så vil utvidelsen automatisk velge den som er tilgjengelig.</p>
+            <img src="https://tiwas.github.io/sc-plugin/Options.png" alt="Generelle innstillinger for utvidelsen">
+
+            <h3>2. Konfigurering av sider</h3>
+            <p>Utvidelsen er fleksibel og lar deg definere nøyaktig hvilke sider den skal aktiveres på, og hvordan den skal hente ut navnet på en serie. Du kan sette opp regler for sider som IMDb, TVMaze, TheTVDB, og andre.</p>
+            <img src="https://tiwas.github.io/sc-plugin/site_settings.png" alt="Innstillinger for en spesifikk side som IMDb">
+            <p>Du må spesifisere hvordan utvidelsen skal finne seriens tittel (enten via XPath eller Regex) og hvor på siden ikonet skal plasseres (via XPath).</p>
+        </section>
+
+        <section class="highlight">
+            <h2>Forutsetninger</h2>
+            <p>For at denne utvidelsen skal fungere, må du ha en fungerende installasjon av <strong>SickChill</strong>. Dette er et fantastisk verktøy for å administrere TV-serier, og er helt nødvendig for denne utvidelsen.</p>
+            <ul>
+                <li><a href="https://sickchill.github.io/" target="_blank">Besøk SickChill sin hjemmeside</a></li>
+                <li><a href="https://github.com/SickChill/sickchill" target="_blank">Se kildekoden på GitHub</a></li>
+            </ul>
+        </section>
+
+        <section class="donation-section">
+            <h2>Nyttig verktøy?</h2>
+            <p>Hvis du finner denne utvidelsen nyttig, kan du gjerne spandere en kaffe på meg!</p>
+            <a href="#" class="donation-button" target="_blank">Doner €1 via PayPal</a>
+        </section>
+
+        <footer class="disclaimer">
+            <p><strong>Ansvarsfraskrivelse:</strong> Ikonet og navnet "SickChill" er lånt fra det offisielle SickChill-prosjektet og tilhører deres respektive eiere. Denne utvidelsen er et uavhengig og uoffisielt prosjekt.</p>
+        </footer>
+    </div>
+</body>
+</html>
