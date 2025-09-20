@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="no">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,7 +57,7 @@
             margin-top: 2rem;
             text-align: center;
         }
-        .donation-section {
+        .support-section {
             text-align: center;
             padding: 2rem;
             background-color: #f8f9fa;
@@ -75,6 +75,7 @@
             border-radius: 5px;
             text-decoration: none;
             transition: background-color 0.3s ease;
+            margin-top: 1rem;
         }
         .donation-button:hover {
             background-color: #218838;
@@ -85,47 +86,47 @@
     <div class="container">
         <header>
             <h1>SickChill Plugin</h1>
-            <p style="text-align: center;">En enkel nettleserutvidelse for å legge til serier i din lokale SickChill-installasjon.</p>
+            <p style="text-align: center;">A simple browser extension to add shows to your local SickChill installation.</p>
         </header>
 
         <section>
-            <h2>Hva gjør den?</h2>
-            <p>Dette er en "hjelper"-utvidelse som gjør det enklere å legge til nye TV-serier i SickChill. Når du er på en nettside som IMDb, vil utvidelsen legge til et lite SickChill-ikon ved siden av serietittelen.</p>
-            <img src="https://tiwas.github.io/sc-plugin/IMDb injected link.png" alt="SickChill-ikon injisert på IMDb">
-            <p><strong>Dette ikonet fungerer som en hurtiglenke.</strong> Når du klikker på det, åpnes en ny fane direkte til "Legg til serie"-siden i din SickChill, og søket etter serien starter automatisk. Enklere blir det ikke!</p>
+            <h2>What It Does</h2>
+            <p>This is a "helper" extension that simplifies adding new TV shows to SickChill. When you are on a supported site like IMDb, the extension will add a small SickChill icon next to the show's title.</p>
+            <img src="https://tiwas.github.io/sc-plugin/IMDb injected link.png" alt="SickChill icon injected on IMDb">
+            <p><strong>This icon acts as a shortcut.</strong> When you click it, a new tab will open directly to the "Add Show" page in your SickChill, and the search for the show will start automatically. It's that simple!</p>
         </section>
 
         <section>
-            <h2>Hvordan sette den opp</h2>
-            <p>Oppsettet gjøres på innstillingssiden i utvidelsen. Her legger du inn generell informasjon og konfigurerer hvilke sider utvidelsen skal fungere på.</p>
+            <h2>How to Set It Up</h2>
+            <p>The setup is done on the extension's options page. Here, you'll provide general information and configure which sites the extension should work on.</p>
             
-            <h3>1. Generelle Innstillinger</h3>
-            <p>Her må du legge inn adressen til din SickChill-server og din API-nøkkel. Du kan legge inn både ekstern og intern adresse, så vil utvidelsen automatisk velge den som er tilgjengelig.</p>
-            <img src="https://tiwas.github.io/sc-plugin/Options.png" alt="Generelle innstillinger for utvidelsen">
+            <h3>1. General Settings</h3>
+            <p>You need to enter the address of your SickChill server and your API key. You can provide both an external and an internal address, and the extension will automatically use the one that is reachable.</p>
+            <img src="https://tiwas.github.io/sc-plugin/Options.png" alt="General settings for the extension">
 
-            <h3>2. Konfigurering av sider</h3>
-            <p>Utvidelsen er fleksibel og lar deg definere nøyaktig hvilke sider den skal aktiveres på, og hvordan den skal hente ut navnet på en serie. Du kan sette opp regler for sider som IMDb, TVMaze, TheTVDB, og andre.</p>
-            <img src="https://tiwas.github.io/sc-plugin/site_settings.png" alt="Innstillinger for en spesifikk side som IMDb">
-            <p>Du må spesifisere hvordan utvidelsen skal finne seriens tittel (enten via XPath eller Regex) og hvor på siden ikonet skal plasseres (via XPath).</p>
+            <h3>2. Site Configuration</h3>
+            <p>The extension is flexible and allows you to define exactly which pages it should activate on, and how it should extract the name of a show. You can set up rules for sites like IMDb, TVMaze, TheTVDB, and others.</p>
+            <img src="https://tiwas.github.io/sc-plugin/site_settings.png" alt="Settings for a specific site like IMDb">
+            <p>You must specify how the extension should find the show's title (using either XPath or a Regex) and where on the page the icon should be injected (using XPath).</p>
         </section>
 
         <section class="highlight">
-            <h2>Forutsetninger</h2>
-            <p>For at denne utvidelsen skal fungere, må du ha en fungerende installasjon av <strong>SickChill</strong>. Dette er et fantastisk verktøy for å administrere TV-serier, og er helt nødvendig for denne utvidelsen.</p>
+            <h2>Prerequisites</h2>
+            <p>For this extension to work, you must have a running installation of <strong>SickChill</strong>. This is a fantastic tool for managing TV shows and is required for this extension to function.</p>
             <ul>
-                <li><a href="https://sickchill.github.io/" target="_blank">Besøk SickChill sin hjemmeside</a></li>
-                <li><a href="https://github.com/SickChill/sickchill" target="_blank">Se kildekoden på GitHub</a></li>
+                <li><a href="https://sickchill.github.io/" target="_blank">Visit the SickChill Homepage</a></li>
+                <li><a href="https://github.com/SickChill/sickchill" target="_blank">View the Source Code on GitHub</a></li>
             </ul>
         </section>
 
-        <section class="donation-section">
-            <h2>Nyttig verktøy?</h2>
-            <p>Hvis du finner denne utvidelsen nyttig, kan du gjerne spandere en kaffe på meg!</p>
-            <a href="#" class="donation-button" target="_blank">Doner €1 via PayPal</a>
+        <section class="support-section">
+            <h2>Feedback & Support</h2>
+            <p>Suggestions for improvements and feedback are always welcome! If you find this tool useful, please consider supporting its development with a small donation.</p>
+            <a href="http://paypal.me/tiwasno/1EUR" class="donation-button" target="_blank">Donate €1 via PayPal</a>
         </section>
 
         <footer class="disclaimer">
-            <p><strong>Ansvarsfraskrivelse:</strong> Ikonet og navnet "SickChill" er lånt fra det offisielle SickChill-prosjektet og tilhører deres respektive eiere. Denne utvidelsen er et uavhengig og uoffisielt prosjekt.</p>
+            <p><strong>Disclaimer:</strong> The icon and the name "SickChill" are borrowed from the official SickChill project and belong to their respective owners. This extension is an independent and unofficial project.</p>
         </footer>
     </div>
 </body>
