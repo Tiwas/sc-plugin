@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const restoreBtn = document.getElementById('restoreBtn');
     const restoreInput = document.getElementById('restoreInput');
     
+    // Version display element
+    const versionDisplay = document.getElementById('version-display');
+    
     // Modal fields
     const siteIdInput = document.getElementById('siteId');
     const siteNameInput = document.getElementById('siteName');
@@ -283,6 +286,14 @@ document.addEventListener('DOMContentLoaded', () => {
         closeModal();
     }
 
+    // --- Function to display version ---
+    function displayVersion() {
+        const manifest = chrome.runtime.getManifest();
+        if (manifest && manifest.version) {
+            versionDisplay.textContent = `Version: ${manifest.version}`;
+        }
+    }
+
     // --- Event Listeners ---
     saveGeneralBtn.addEventListener('click', saveGeneralSettings);
     addSiteBtn.addEventListener('click', () => openModal());
@@ -303,4 +314,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initial Load ---
     restoreGeneralSettings();
     restoreSites();
+    displayVersion(); // Call the new function on load
 });

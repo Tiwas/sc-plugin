@@ -11,7 +11,34 @@
             margin: auto;
             background-color: #f4f4f9;
         }
-        h1, h2, h3 {
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+        .header-links {
+            font-size: 0.8em;
+            font-weight: normal;
+            vertical-align: middle;
+        }
+        .header-links a {
+            color: #0056b3;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+        .header-links a:hover {
+            text-decoration: underline;
+        }
+        #version-display {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        h2, h3 {
             color: #333;
         }
         .settings-card, .sites-card {
@@ -122,7 +149,17 @@
 </head>
 <body>
 
-    <h1>SickChill Plugin Settings</h1>
+    <header class="header">
+        <h1>
+            SickChill Plugin Settings 
+        </h1>
+		<br>
+		<span class="header-links">
+			(<a href="https://tiwas.github.io/sc-plugin/" target="_blank">homepage</a> | 
+			<a href="https://github.com/Tiwas/sc-plugin" target="_blank">github</a>)
+		</span>
+        <div id="version-display"></div>
+    </header>
 
     <div class="settings-card">
         <h2>General</h2>
@@ -158,10 +195,11 @@
     <div class="sites-card">
         <h2>Configured Sites</h2>
         <ul id="siteList">
-            </ul>
+            <!-- Site items will be injected here by JavaScript -->
+        </ul>
         <button id="addSiteBtn" class="btn-primary">Add New Site</button>
     </div>
-
+    
     <div class="settings-card">
         <h2>Data Management</h2>
         <p>Save all your settings to a file, or restore them from a backup.</p>
@@ -172,6 +210,7 @@
         </div>
     </div>
 
+    <!-- Modal for adding/editing sites -->
     <div id="siteModal" class="modal-backdrop">
         <div class="modal-content">
             <h2 id="modalTitle">Add Site</h2>
@@ -226,7 +265,7 @@
             </div>
         </div>
     </div>
-
+    
     <script src="options.js"></script>
 </body>
 </html>
