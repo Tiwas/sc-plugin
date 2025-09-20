@@ -24,12 +24,12 @@ function extractName(site) {
 
 /**
  * Injects the "Add to SickChill" icon and link onto the page.
- * @param {HTMLElement} targetElement - The DOM element to inject the icon next to.
+ * @param {HTMLElement} targetElement - The DOM element where the icon should be injected.
  * @param {string} title - The extracted TV show title.
  */
 function performInjection(targetElement, title) {
-    // Avoid duplicate injections.
-    if (targetElement.previousSibling && targetElement.previousSibling.id === 'sickchill-add-icon') return;
+    // Avoid duplicate injections
+    if (document.getElementById('sickchill-add-icon')) return;
 
     const link = document.createElement('a');
     link.id = 'sickchill-add-icon';
@@ -54,9 +54,12 @@ function performInjection(targetElement, title) {
     icon.style.verticalAlign = 'middle';
 
     link.appendChild(icon);
-    targetElement.parentNode.insertBefore(link, targetElement);
+    
+    // Insert the icon as the first child of the target element (e.g., inside the H1 tag)
+    targetElement.insertBefore(link, targetElement.firstChild);
     console.log(`SickChill Plugin: Icon injected for "${title}".`);
 }
+
 
 /**
  * Finds the matching site configuration for the current URL.
@@ -103,6 +106,7 @@ function waitForElementsAndInject(site) {
         if (site.contentRegex && !new RegExp(site.contentRegex, 'i').test(document.body.innerText)) return;
         
         const extractedName = extractName(site);
+        // Ensure injectionXpath points to the container (e.g., //h1) and not the text node
         const injectionTarget = document.evaluate(site.injectionXpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         
         // Once both the name and target element are found, perform the injection.
@@ -113,4 +117,8 @@ function waitForElementsAndInject(site) {
     }, 250);
 }
 
-initialize();
+// Check if the script is already injected to avoid running multiple times
+if (typeof window.sickChillInjected === 'undefined') {
+    window.sickChillInjected = true;
+    initialize();
+}
