@@ -30,6 +30,9 @@
             padding-bottom: 0.5rem;
             margin-top: 2.5rem;
         }
+        h3 {
+            margin-top: 2rem;
+        }
         p, li {
             font-size: 16px;
         }
@@ -47,7 +50,7 @@
             margin: 2rem 0;
             border-radius: 4px;
         }
-        .highlight a {
+        .highlight a, .getting-started-link {
             font-weight: bold;
             color: #0056b3;
         }
@@ -107,7 +110,13 @@
             <h3>2. Site Configuration</h3>
             <p>The extension is flexible and allows you to define exactly which pages it should activate on, and how it should extract the name of a show. You can set up rules for sites like IMDb, TVMaze, TheTVDB, and others.</p>
             <img src="https://tiwas.github.io/sc-plugin/site_settings.png" alt="Settings for a specific site like IMDb">
-            <p>You must specify how the extension should find the show's title (using either XPath or a Regex) and where on the page the icon should be injected (using XPath).</p>
+            
+            <h3>Getting Started Example</h3>
+            <p>To help you get started, you can download a pre-configured settings file with the IMDb example shown above. Go to the extension's Options page, click "Restore Settings", and select the downloaded file.</p>
+            <p>
+                <a href="https://tiwas.github.io/sc-plugin/getting_started.json" class="getting-started-link" download>Download getting_started.json</a>
+            </p>
+
         </section>
 
         <section class="highlight">

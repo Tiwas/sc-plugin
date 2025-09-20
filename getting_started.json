@@ -1,0 +1,13 @@
+{
+  "sites": [
+    {
+      "name": "IMDb",
+      "host": "imdb.com",
+      "urlRegex": "\\/title\\/tt\\d+",
+      "contentRegex": "tv series",
+      "nameExtractionRegex": "",
+      "nameExtractionXpath": "//span[@data-testid='hero__primary-text']/text()",
+      "injectionXpath": "//span[@data-testid='hero__primary-text']"
+    }
+  ]
+}
