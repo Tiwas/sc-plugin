@@ -154,7 +154,14 @@
         <button id="saveGeneral" class="btn-primary">Save General Settings</button>
         <div id="status"></div>
     </div>
-    
+
+    <div class="sites-card">
+        <h2>Configured Sites</h2>
+        <ul id="siteList">
+            </ul>
+        <button id="addSiteBtn" class="btn-primary">Add New Site</button>
+    </div>
+
     <div class="settings-card">
         <h2>Data Management</h2>
         <p>Save all your settings to a file, or restore them from a backup.</p>
@@ -163,13 +170,6 @@
             <button id="restoreBtn" class="btn-secondary">Restore Settings</button>
             <input type="file" id="restoreInput" accept=".json" style="display: none;">
         </div>
-    </div>
-
-    <div class="sites-card">
-        <h2>Configured Sites</h2>
-        <ul id="siteList">
-            </ul>
-        <button id="addSiteBtn" class="btn-primary">Add New Site</button>
     </div>
 
     <div id="siteModal" class="modal-backdrop">
