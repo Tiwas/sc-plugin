@@ -8,6 +8,15 @@
       "nameExtractionRegex": "",
       "nameExtractionXpath": "//span[@data-testid='hero__primary-text']/text()",
       "injectionXpath": "//span[@data-testid='hero__primary-text']"
-    }
+    },
+    {
+    "contentRegex": "",
+    "host": "thetvdb.com",
+    "injectionXpath": "//h1[@id='series_title']",
+    "name": "TheTVDB",
+    "nameExtractionRegex": "",
+    "nameExtractionXpath": "//h1[@id='series_title']/text()",
+    "urlRegex": ""
+    }  
   ]
 }
