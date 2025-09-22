@@ -64,20 +64,28 @@ function updateActionIconState(tabId, url) {
 
 /**
  * Tries to connect to the internal and external SickChill addresses to find one that is active.
+ * Assumes https:// for external and http:// for internal if no protocol is specified.
  * @param {object} settings - The plugin settings containing address and API key.
  * @returns {Promise<string|null>} The base URL of the active SickChill instance or null if none are reachable.
  */
 async function getActiveAddress(settings) {
-    const addressesToTry = [settings.internalAddress, settings.externalAddress].filter(Boolean);
-    for (const address of addressesToTry) {
+    // Create an array specifying which address is which
+    const addressesToTry = [
+        { address: settings.internalAddress, isExternal: false },
+        { address: settings.externalAddress, isExternal: true }
+    ].filter(a => a.address); // Filter out any empty addresses
+
+    for (const { address, isExternal } of addressesToTry) {
         let addressWithProtocol = address;
-        // If no protocol is specified, default to http. User can override by adding https:// in settings.
+
+        // If no protocol is specified, apply default based on type
         if (!address.startsWith('http://') && !address.startsWith('https://')) {
-            addressWithProtocol = `http://${address}`;
+            addressWithProtocol = isExternal 
+                ? `https://${address}` // Default to HTTPS for external
+                : `http://${address}`;   // Default to HTTP for internal
         }
         
         let cleanBaseUrl;
-        // Log which address is being tried.
         console.log(`SickChill Plugin: Attempting to connect to ${addressWithProtocol}`);
         try {
             const urlObject = new URL(addressWithProtocol);
@@ -87,7 +95,6 @@ async function getActiveAddress(settings) {
             
             await fetch(`${cleanBaseUrl}/api/${settings.apiKey}/?cmd=ping`, { signal: AbortSignal.timeout(3000) });
             
-            // Log success.
             console.log(`SickChill Plugin: Successfully connected to ${cleanBaseUrl}`);
             return cleanBaseUrl;
         } catch (e) {
@@ -97,11 +104,13 @@ async function getActiveAddress(settings) {
     return null;
 }
 
+
 /**
  * Handles the main user action: opening the SickChill "Add Show" page and preparing it for automation.
  * @param {string} name - The name of the TV show to add.
  */
 async function handleDirectToAddShow(name) {
+    if (!name || name.trim() === '') return; // Don't proceed if name is empty
     const settings = await chrome.storage.local.get(['internalAddress', 'externalAddress', 'apiKey']);
     const activeAddress = await getActiveAddress(settings);
     if (!activeAddress) {
@@ -112,7 +121,7 @@ async function handleDirectToAddShow(name) {
     }
     
     // Store the show name in session storage, which is temporary and ideal for this task.
-    await chrome.storage.session.set({ showNameToAdd: name });
+    await chrome.storage.session.set({ showNameToAdd: name.trim() });
     
     const addShowUrl = `${activeAddress}/addShows/newShow/`;
     chrome.tabs.create({ url: addShowUrl });
@@ -157,16 +166,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "directToAddShowPage") {
         handleDirectToAddShow(request.name);
     }
-    // Return true to indicate that we will send a response asynchronously.
-    // This is good practice but not strictly necessary for this specific action.
     return true; 
 });
 
 // --- Event Listeners for Browser Action Icon ---
 
-/**
- * Checks the currently active tab and updates the icon state.
- */
 function checkActiveTab() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0]) {
@@ -175,15 +179,12 @@ function checkActiveTab() {
     });
 }
 
-// Update the icon whenever a tab is updated.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    // Use 'complete' to ensure the final URL is evaluated
     if (changeInfo.status === 'complete') {
         updateActionIconState(tabId, tab.url);
     }
 });
 
-// Update the icon when the user switches to a different tab.
 chrome.tabs.onActivated.addListener((activeInfo) => {
     chrome.tabs.get(activeInfo.tabId, (tab) => {
         if (tab) {
@@ -192,14 +193,32 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
     });
 });
 
-// Check the initial tab when the extension is installed or the browser starts.
-chrome.runtime.onInstalled.addListener(checkActiveTab);
-
-// Re-check when the user saves changes to the site configurations.
 chrome.storage.onChanged.addListener((changes) => {
     if (changes.sites) {
         checkActiveTab();
     }
 });
+
+// --- Context Menu (Right-Click) Setup ---
+chrome.runtime.onInstalled.addListener(() => {
+    // Initial check of the active tab
+    checkActiveTab();
+    
+    // Create the context menu item
+    chrome.contextMenus.create({
+        id: "search-sickchill",
+        title: "Search SickChill for \"%s\"", // %s is a placeholder for the selected text
+        contexts: ["selection"]
+    });
+});
+
+// Listener for when the context menu item is clicked
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === "search-sickchill") {
+        // The selected text is in info.selectionText
+        handleDirectToAddShow(info.selectionText);
+    }
+});
+
 
 console.log("SickChill Plugin: Background script loaded.");
