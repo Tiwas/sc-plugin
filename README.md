@@ -26,10 +26,14 @@ For this extension to work, you must have a running installation of [SickChill](
 
 ## Installation
 
-### From the Chrome Web Store (Recommended)
-*Coming soon!*
+You have two options for installation:
 
-### Manual Installation (for developers)
+### 1. From the Chrome Web Store (Recommended)
+* [**Install from Chrome Web Store**](https://chromewebstore.google.com/detail/mpkhfjocipimpokgmmeihnceghncfhhh)
+
+*Please be aware that there may be some delay between new features being available and the plugin being updated on the store.*
+
+### 2. Manual Installation (from GitHub)
 1.  Clone or download this repository.
 2.  Open Chrome and navigate to `chrome://extensions`.
 3.  Enable "Developer mode" in the top right corner.
