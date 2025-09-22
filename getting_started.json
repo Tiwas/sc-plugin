@@ -17,6 +17,16 @@
     "nameExtractionRegex": "",
     "nameExtractionXpath": "//h1[@id='series_title']/text()",
     "urlRegex": ""
+    },
+    {
+      "contentRegex": "",
+      "enabled": false,
+      "host": "thetvdb.com",
+      "injectionXpath": "//h1[@id='series_title']",
+      "name": "thetvdb",
+      "nameExtractionRegex": "",
+      "nameExtractionXpath": "//h1[@id='series_title']/text()",
+      "urlRegex": "series"
     }  
   ]
 }
