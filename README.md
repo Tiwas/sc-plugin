@@ -3,17 +3,19 @@
 A browser extension that makes it easier to add TV shows to your local SickChill installation.
 
 ![SickChill Plugin in action on IMDb](https://tiwas.github.io/sc-plugin/img/IMDb%20injected%20link.png)
+![Context Menu in action](https://tiwas.github.io/sc-plugin/img/context_menu.png)
 
 ---
 
 ## About the Project
 
-This is a "helper" extension designed to streamline the process of adding new shows to SickChill. The extension identifies TV shows on supported websites (like IMDb) and injects a small SickChill icon next to the title. A click on this icon takes you directly to the "Add Show" page in your SickChill, with the show's name already pre-filled in the search bar.
+This is a "helper" extension designed to streamline the process of adding new shows to SickChill. The extension identifies TV shows on supported websites (like IMDb) by injecting a small SickChill icon next to the title. Alternatively, you can highlight any text, right-click, and add the show via the context menu. A click on either of these takes you directly to the "Add Show" page in your SickChill, with the show's name already pre-filled in the search bar.
 
 Visit the project's [homepage](https://tiwas.github.io/sc-plugin/) for a more detailed overview.
 
 ### Key Features
-* **Quick Link:** Injects an 'Add to SickChill' link on show pages.
+* **Quick Link:** Injects an 'Add to SickChill' link on user-configured show pages.
+* **Context Menu Support:** Highlight any show's name on any page, right-click, and add it directly to SickChill.
 * **Automated Search:** Opens the 'Add Show' page in SickChill and starts the search automatically.
 * **Flexible Setup:** Supports custom rules for site recognition via the options page.
 * **Data Management:** Includes functionality to back up and restore your settings.
