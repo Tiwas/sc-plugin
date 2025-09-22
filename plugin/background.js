@@ -21,7 +21,7 @@ function createIcon(color, size) {
 
 /**
  * Updates the browser action icon's state (enabled/disabled) based on whether the URL
- * in the given tab matches any of the user-configured sites.
+ * in the given tab matches any of the user-configured and enabled sites.
  * @param {number} tabId - The ID of the tab to update.
  * @param {string} url - The URL of the tab.
  */
@@ -32,6 +32,9 @@ function updateActionIconState(tabId, url) {
         const sites = result.sites;
         let matchFound = false;
         for (const site of sites) {
+            // Skip disabled sites
+            if (site.enabled === false) continue;
+
             if (site.host && url.includes(site.host)) {
                 if (site.urlRegex) {
                     try {
@@ -67,20 +70,28 @@ function updateActionIconState(tabId, url) {
 async function getActiveAddress(settings) {
     const addressesToTry = [settings.internalAddress, settings.externalAddress].filter(Boolean);
     for (const address of addressesToTry) {
+        let addressWithProtocol = address;
+        // If no protocol is specified, default to http. User can override by adding https:// in settings.
+        if (!address.startsWith('http://') && !address.startsWith('https://')) {
+            addressWithProtocol = `http://${address}`;
+        }
+        
         let cleanBaseUrl;
+        // Log which address is being tried.
+        console.log(`SickChill Plugin: Attempting to connect to ${addressWithProtocol}`);
         try {
-            // Ensure the address has a protocol for the URL constructor.
-            let addressWithProtocol = address;
-            if (!address.startsWith('http://') && !address.startsWith('https://')) {
-                addressWithProtocol = `https://${address}`;
-            }
             const urlObject = new URL(addressWithProtocol);
-            cleanBaseUrl = `${urlObject.protocol}//${urlObject.host}`;
-            // Ping the SickChill API to verify connectivity.
+             // Remove any trailing slash from the path to create a clean base URL.
+            const cleanPath = urlObject.pathname.replace(/\/+$/, '');
+            cleanBaseUrl = `${urlObject.protocol}//${urlObject.host}${cleanPath}`;
+            
             await fetch(`${cleanBaseUrl}/api/${settings.apiKey}/?cmd=ping`, { signal: AbortSignal.timeout(3000) });
+            
+            // Log success.
+            console.log(`SickChill Plugin: Successfully connected to ${cleanBaseUrl}`);
             return cleanBaseUrl;
         } catch (e) {
-            console.warn(`Address ${cleanBaseUrl || address} failed the connection test.`);
+            console.warn(`SickChill Plugin: Connection to ${cleanBaseUrl || addressWithProtocol} failed.`);
         }
     }
     return null;
@@ -146,6 +157,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "directToAddShowPage") {
         handleDirectToAddShow(request.name);
     }
+    // Return true to indicate that we will send a response asynchronously.
+    // This is good practice but not strictly necessary for this specific action.
+    return true; 
 });
 
 // --- Event Listeners for Browser Action Icon ---
@@ -163,6 +177,7 @@ function checkActiveTab() {
 
 // Update the icon whenever a tab is updated.
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    // Use 'complete' to ensure the final URL is evaluated
     if (changeInfo.status === 'complete') {
         updateActionIconState(tabId, tab.url);
     }
@@ -171,7 +186,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 // Update the icon when the user switches to a different tab.
 chrome.tabs.onActivated.addListener((activeInfo) => {
     chrome.tabs.get(activeInfo.tabId, (tab) => {
-        updateActionIconState(tab.id, tab.url);
+        if (tab) {
+            updateActionIconState(tab.id, tab.url);
+        }
     });
 });
 

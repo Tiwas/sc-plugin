@@ -64,7 +64,13 @@ function performInjection(targetElement, title) {
 function initialize() {
     chrome.storage.local.get({ sites: [] }, (result) => {
         if (chrome.runtime.lastError) return;
+        
         const matchingSite = result.sites.find(site => {
+            // Check if site is enabled (undefined is treated as enabled for backward compatibility)
+            if (site.enabled === false) {
+                return false;
+            }
+        
             if (site.host && window.location.href.includes(site.host)) {
                 // If a URL regex is provided, it must also match.
                 if (site.urlRegex) {
@@ -79,6 +85,7 @@ function initialize() {
             }
             return false;
         });
+
         if (matchingSite) {
             waitForElementsAndInject(matchingSite);
         }

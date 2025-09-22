@@ -89,35 +89,52 @@
         #status { margin-top: 15px; font-weight: bold; }
 
         /* Site List */
-        #siteList {
+        #siteList, #shareSiteList, #importSiteList {
             list-style: none;
             padding: 0;
+            max-height: 40vh;
+            overflow-y: auto;
         }
         .site-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 15px;
             padding: 10px;
             border-bottom: 1px solid #eee;
         }
         .site-item:last-child {
             border-bottom: none;
         }
+        .site-details {
+            flex-grow: 1;
+        }
         .site-item-name {
             font-weight: bold;
         }
         .site-item-host {
             color: #555;
-            margin-left: 15px;
+            margin-left: 2px;
+        }
+        .site-item-actions {
+            margin-left: auto;
         }
         .site-item-actions button { margin-left: 10px; }
         
         /* Data Management Section */
         .data-actions {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-top: 10px;
         }
+        
+        /* Toggle Switch CSS */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #007bff; }
+        input:checked + .slider:before { transform: translateX(20px); }
 
         /* Modal */
         .modal-backdrop {
@@ -128,6 +145,7 @@
             display: none;
             align-items: center;
             justify-content: center;
+            z-index: 100;
         }
         .modal-content {
             background-color: white;
@@ -145,6 +163,14 @@
         .modal-actions button {
             margin-left: 10px;
         }
+        #shareSiteList li, #importSiteList li {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+        }
+        #shareSiteList input[type="checkbox"], #importSiteList input[type="checkbox"] {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -153,23 +179,25 @@
         <h1>
             SickChill Plugin Settings 
         </h1>
-		<br>
-		<span class="header-links">
-			(<a href="https://tiwas.github.io/sc-plugin/" target="_blank">homepage</a> | 
-			<a href="https://github.com/Tiwas/sc-plugin" target="_blank">github</a>)
-		</span>
+        <br>
+        <span class="header-links">
+            (<a href="https://tiwas.github.io/sc-plugin/" target="_blank">homepage</a> | 
+            <a href="https://github.com/Tiwas/sc-plugin" target="_blank">github</a>)
+        </span>
         <div id="version-display"></div>
     </header>
 
     <div class="settings-card">
         <h2>General</h2>
         <div class="form-group">
-            <label for="externalAddress">External Address (IP/Host)</label>
-            <input type="text" id="externalAddress">
+            <label for="externalAddress">External Address</label>
+            <input type="text" id="externalAddress" placeholder="e.g., my-sickchill.com">
+            <small>Include http:// or https:// if needed. Defaults to http:// if no protocol is specified.</small>
         </div>
         <div class="form-group">
-            <label for="internalAddress">Internal Address (IP)</label>
-            <input type="text" id="internalAddress">
+            <label for="internalAddress">Internal Address</label>
+            <input type="text" id="internalAddress" placeholder="e.g., 192.168.1.100:8081">
+            <small>Include http:// or https:// if needed. Defaults to http:// if no protocol is specified.</small>
         </div>
         <div class="form-group">
             <label for="apiKey">API Key</label>
@@ -195,22 +223,22 @@
     <div class="sites-card">
         <h2>Configured Sites</h2>
         <ul id="siteList">
-            <!-- Site items will be injected here by JavaScript -->
-        </ul>
+            </ul>
         <button id="addSiteBtn" class="btn-primary">Add New Site</button>
     </div>
     
     <div class="settings-card">
         <h2>Data Management</h2>
-        <p>Save all your settings to a file, or restore them from a backup.</p>
+        <p>Save all your settings to a file, restore them from a backup, or load community examples.</p>
         <div class="data-actions">
             <button id="backupBtn" class="btn-secondary">Backup Settings</button>
-            <button id="restoreBtn" class="btn-secondary">Restore Settings</button>
+            <button id="restoreBtn" class="btn-secondary">Load Settings</button>
+            <button id="loadExamplesBtn" class="btn-secondary">Load Examples</button>
+            <button id="shareRulesBtn" class="btn-secondary">Share Your Rules</button>
             <input type="file" id="restoreInput" accept=".json" style="display: none;">
         </div>
     </div>
 
-    <!-- Modal for adding/editing sites -->
     <div id="siteModal" class="modal-backdrop">
         <div class="modal-content">
             <h2 id="modalTitle">Add Site</h2>
@@ -234,7 +262,6 @@
                 <input type="text" id="siteContentRegex" placeholder="e.g., TV Series">
                 <small>Case-insensitive regex to match against the page text content.</small>
             </div>
-
             <div class="form-group-box">
                 <h3>Name Extraction (Required)</h3>
                 <small>Provide exactly ONE of the following two methods.</small>
@@ -249,7 +276,6 @@
                     <small>Extracts name using an XPath query.</small>
                 </div>
             </div>
-
             <div class="form-group-box" style="margin-top: 20px;">
                 <h3>Logo Injection (Required)</h3>
                  <div class="form-group" style="margin-top: 15px;">
@@ -258,7 +284,6 @@
                     <small>XPath to find the element where the 'Add' link should be injected.</small>
                 </div>
             </div>
-
             <div class="modal-actions">
                 <button id="cancelModalBtn" class="btn-secondary">Cancel</button>
                 <button id="saveModalBtn" class="btn-primary">Save Site</button>
@@ -266,6 +291,30 @@
         </div>
     </div>
     
+    <div id="shareModal" class="modal-backdrop">
+        <div class="modal-content">
+            <h2>Share Your Rules</h2>
+            <p>Select the site rules you want to share with the community. This will generate a pre-filled GitHub issue for you to submit.</p>
+            <ul id="shareSiteList"></ul>
+            <div class="modal-actions">
+                <button id="cancelShareModalBtn" class="btn-secondary">Cancel</button>
+                <button id="generateShareLinkBtn" class="btn-primary">Generate Share Link</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="importModal" class="modal-backdrop">
+        <div class="modal-content">
+            <h2>Import Rules</h2>
+            <p>Select the rules you want to import from the file.</p>
+            <ul id="importSiteList"></ul>
+            <div class="modal-actions">
+                <button id="cancelImportModalBtn" class="btn-secondary">Cancel</button>
+                <button id="importSelectedBtn" class="btn-primary">Import Selected</button>
+            </div>
+        </div>
+    </div>
+
     <script src="options.js"></script>
 </body>
 </html>
