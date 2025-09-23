@@ -20,6 +20,17 @@ function createIcon(color, size) {
 }
 
 /**
+ * A reusable callback function to gracefully handle Chrome API errors.
+ * This is expected when a tab is closed before an API call completes.
+ */
+const handleTabApiError = () => {
+    if (chrome.runtime.lastError) {
+        // Log the error for debugging purposes, but prevent it from being "uncaught".
+        console.log(`Ignored an error: ${chrome.runtime.lastError.message}`);
+    }
+};
+
+/**
  * Updates the browser action icon's state (enabled/disabled) based on whether the URL
  * in the given tab matches any of the user-configured and enabled sites.
  * @param {number} tabId - The ID of the tab to update.
@@ -28,7 +39,11 @@ function createIcon(color, size) {
 function updateActionIconState(tabId, url) {
     if (!url || !tabId) return;
     chrome.storage.local.get({ sites: [] }, (result) => {
-        if (chrome.runtime.lastError) return;
+        if (chrome.runtime.lastError) {
+            console.warn("Could not get sites from storage:", chrome.runtime.lastError.message);
+            return;
+        };
+
         const sites = result.sites;
         let matchFound = false;
         for (const site of sites) {
@@ -46,18 +61,22 @@ function updateActionIconState(tabId, url) {
             }
             if (matchFound) break;
         }
+
+        const iconColor = matchFound ? '#1E90FF' : '#808080';
+        
         // Set the icon and enabled/disabled state for the specific tab.
         chrome.action.setIcon({
             tabId: tabId,
             imageData: {
-                '48': createIcon(matchFound ? '#1E90FF' : '#808080', 48),
-                '128': createIcon(matchFound ? '#1E90FF' : '#808080', 128)
+                '48': createIcon(iconColor, 48),
+                '128': createIcon(iconColor, 128)
             }
-        });
+        }, handleTabApiError);
+
         if (matchFound) {
-            chrome.action.enable(tabId);
+            chrome.action.enable(tabId, handleTabApiError);
         } else {
-            chrome.action.disable(tabId);
+            chrome.action.disable(tabId, handleTabApiError);
         }
     });
 }
@@ -150,13 +169,17 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         // If a show name is stored, inject the automation script.
         if (data.showNameToAdd) {
             console.log(`Injecting search script for "${data.showNameToAdd}" into tab ${tabId}`);
-            chrome.scripting.executeScript({
-                target: { tabId: tabId },
-                func: automateSearch,
-                args: [data.showNameToAdd]
-            });
-            // Clean up by removing the show name from session storage.
-            await chrome.storage.session.remove('showNameToAdd');
+            try {
+                await chrome.scripting.executeScript({
+                    target: { tabId: tabId },
+                    func: automateSearch,
+                    args: [data.showNameToAdd]
+                });
+                // Clean up by removing the show name from session storage.
+                await chrome.storage.session.remove('showNameToAdd');
+            } catch (error) {
+                 handleTabApiError();
+            }
         }
     }
 });
@@ -173,6 +196,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 function checkActiveTab() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (chrome.runtime.lastError) {
+             handleTabApiError();
+             return;
+        }
         if (tabs[0]) {
             updateActionIconState(tabs[0].id, tabs[0].url);
         }
@@ -180,17 +207,21 @@ function checkActiveTab() {
 }
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete') {
+    if (changeInfo.status === 'complete' && tab.url) {
         updateActionIconState(tabId, tab.url);
     }
 });
 
-chrome.tabs.onActivated.addListener((activeInfo) => {
-    chrome.tabs.get(activeInfo.tabId, (tab) => {
-        if (tab) {
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+    try {
+        const tab = await chrome.tabs.get(activeInfo.tabId);
+        if (tab && tab.url) {
             updateActionIconState(tab.id, tab.url);
         }
-    });
+    } catch (error) {
+        // This error is expected if the tab was closed before the API call completed.
+        handleTabApiError();
+    }
 });
 
 chrome.storage.onChanged.addListener((changes) => {
@@ -219,6 +250,5 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         handleDirectToAddShow(info.selectionText);
     }
 });
-
 
 console.log("SickChill Plugin: Background script loaded.");
