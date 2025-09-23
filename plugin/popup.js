@@ -8,7 +8,7 @@
  */
 function findMatchingSite(sites, url) {
     for (const site of sites) {
-        if (site.host && url.includes(site.host)) {
+        if (site.enabled !== false && site.host && url.includes(site.host)) {
             if (site.urlRegex) {
                 try {
                     if (new RegExp(site.urlRegex, 'i').test(url)) return site;
@@ -55,18 +55,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const configBtn = document.getElementById('configBtn');
     const errorDiv = document.getElementById('error');
 
-    // Get the currently active tab.
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const currentTab = tabs[0];
-        if (!currentTab) {
-            addBtn.disabled = true;
-            addBtn.textContent = "Cannot find active tab";
-            return;
-        }
+    // Use an async IIFE (Immediately Invoked Function Expression) to enable top-level await.
+    (async () => {
+        try {
+            // Get the currently active tab.
+            const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (!currentTab) {
+                addBtn.disabled = true;
+                addBtn.textContent = "Cannot find active tab";
+                return;
+            }
 
-        // Load site configurations from storage.
-        chrome.storage.local.get({ sites: [] }, (result) => {
+            // Load site configurations from storage.
+            const result = await chrome.storage.local.get({ sites: [] });
             const matchingSite = findMatchingSite(result.sites, currentTab.url);
+
             if (!matchingSite) {
                 addBtn.disabled = true;
                 addBtn.textContent = 'No matching site config';
@@ -79,35 +82,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const extractionArg = useRegex ? matchingSite.nameExtractionRegex : matchingSite.nameExtractionXpath;
 
             // Execute the appropriate extraction script in the active tab.
-            chrome.scripting.executeScript({
+            const injectionResults = await chrome.scripting.executeScript({
                 target: { tabId: currentTab.id },
                 func: extractionFunction,
                 args: [extractionArg]
-            }, (injectionResults) => {
-                if (chrome.runtime.lastError || !injectionResults || !injectionResults[0]) {
-                    errorDiv.textContent = 'Could not extract name from page.';
-                    return;
-                }
-
-                const extractedName = injectionResults[0].result;
-                if (extractedName) {
-                    addBtn.textContent = `Add "${extractedName}"`;
-                    addBtn.disabled = false;
-                    
-                    addBtn.addEventListener('click', () => {
-                        // Send a message to the background script to initiate the "add show" process.
-                        chrome.runtime.sendMessage({
-                            action: "directToAddShowPage",
-                            name: extractedName
-                        });
-                        window.close(); // Close the popup after clicking.
-                    });
-                } else {
-                    addBtn.textContent = 'Name not found';
-                }
             });
-        });
-    });
+            
+            // The result may be undefined if the script could not be injected.
+            const extractedName = injectionResults?.[0]?.result;
+
+            if (extractedName) {
+                addBtn.textContent = `Add "${extractedName}"`;
+                addBtn.disabled = false;
+                
+                addBtn.addEventListener('click', () => {
+                    // Send a message to the background script to initiate the "add show" process.
+                    chrome.runtime.sendMessage({
+                        action: "directToAddShowPage",
+                        name: extractedName
+                    });
+                    window.close(); // Close the popup after clicking.
+                });
+            } else {
+                addBtn.textContent = 'Name not found';
+                errorDiv.textContent = 'Could not extract name from page.';
+            }
+        } catch (error) {
+            // This catch block will handle errors if the tab is closed during an async operation.
+            console.log(`Could not execute script on tab: ${error.message}`);
+            errorDiv.textContent = 'Error interacting with the page.';
+            addBtn.disabled = true;
+            addBtn.textContent = 'Error';
+        }
+    })();
 
     // Set up the button to open the extension's options page.
     configBtn.addEventListener('click', () => {
