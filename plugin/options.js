@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             internalAddress: document.getElementById('internalAddress').value,
             apiKey: document.getElementById('apiKey').value,
             apiLanguages: selectedLangs,
+            enableExactSearch: document.getElementById('enableExactSearch').checked,
         };
         chrome.storage.local.set(settings, () => {
             if (chrome.runtime.lastError) {
@@ -65,12 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function restoreGeneralSettings() {
-        const keys = ['externalAddress', 'internalAddress', 'apiKey', 'apiLanguages'];
+        const keys = ['externalAddress', 'internalAddress', 'apiKey', 'apiLanguages', 'enableExactSearch'];
         chrome.storage.local.get(keys, (items) => {
             if (!chrome.runtime.lastError) {
                 document.getElementById('externalAddress').value = items.externalAddress || '';
                 document.getElementById('internalAddress').value = items.internalAddress || '';
                 document.getElementById('apiKey').value = items.apiKey || '';
+                document.getElementById('enableExactSearch').checked = items.enableExactSearch || false;
                 const savedLangs = items.apiLanguages || ['en'];
                 const langOptions = document.getElementById('apiLanguages').options;
                 for (const option of langOptions) {

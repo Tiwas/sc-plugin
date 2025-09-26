@@ -149,11 +149,17 @@ async function handleDirectToAddShow(name) {
 /**
  * This function is injected into the SickChill tab to perform the search automatically.
  * @param {string} showName - The name of the show to search for.
+ * @param {boolean} useExactMatch - Whether to check the 'exact match' checkbox.
  */
-function automateSearch(showName) {
+function automateSearch(showName, useExactMatch) {
     const searchInput = document.getElementById('show-name');
     const searchButton = document.getElementById('search-button');
+    const exactMatchCheckbox = document.getElementById('exact-match');
+
     if (searchInput && searchButton) {
+        if (exactMatchCheckbox) {
+            exactMatchCheckbox.checked = useExactMatch;
+        }
         searchInput.value = showName;
         searchButton.click();
     } else {
@@ -166,6 +172,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     // Check if the tab has finished loading and is the correct "Add Show" page.
     if (changeInfo.status === 'complete' && tab.url && tab.url.includes('/addShows/newShow/')) {
         const data = await chrome.storage.session.get('showNameToAdd');
+        const settings = await chrome.storage.local.get({ enableExactSearch: false });
+
         // If a show name is stored, inject the automation script.
         if (data.showNameToAdd) {
             console.log(`Injecting search script for "${data.showNameToAdd}" into tab ${tabId}`);
@@ -173,7 +181,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 await chrome.scripting.executeScript({
                     target: { tabId: tabId },
                     func: automateSearch,
-                    args: [data.showNameToAdd]
+                    args: [data.showNameToAdd, settings.enableExactSearch]
                 });
                 // Clean up by removing the show name from session storage.
                 await chrome.storage.session.remove('showNameToAdd');
